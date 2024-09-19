@@ -3,13 +3,22 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "db:gen": "bun drizzle-kit generate",
+    "db:mig": "bun drizzle-kit migrate"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@paralleldrive/cuid2": "^2.2.2",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.33.0",
+    "elysia": "latest",
+    "postgres": "^3.4.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "@types/dotenv": "^8.2.0",
+    "bun-types": "latest",
+    "drizzle-kit": "^0.24.2"
   },
   "module": "src/index.js"
 }
