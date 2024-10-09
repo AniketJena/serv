@@ -5,18 +5,17 @@ import { loginBodyParser, signupBodyParser } from "./auth.utils";
 import { jwt } from "@elysiajs/jwt";
 import { eq } from "drizzle-orm";
 
-const auth = new Elysia({
+const authRouteHandler = new Elysia({
   prefix: "/auth"
 }).use(jwt({
   name: "jwt",
   secret: process.env.JWT_SECRET as string
 }))
-
-auth.get("/", async () => {
-  return {
-    msg: "this is the auth route"
-  }
-})
+  .get("/", async () => {
+    return {
+      msg: "this is the auth route"
+    }
+  })
   .post("/login", async ({ jwt, body, cookie: { auth }, error: err }) => {
     const { success, error, data } = await loginBodyParser.safeParseAsync(body)
     if (!success) {
@@ -95,4 +94,4 @@ auth.get("/", async () => {
     }
   })
 
-export default auth
+export default authRouteHandler
