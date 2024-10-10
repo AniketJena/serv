@@ -30,7 +30,7 @@ export const app = new Elysia().use(cors({
       }
       const [user] = await db.selectDistinct().from(users).where(eq(users.id, data?.user_id as string))
       ws.subscribe(`channel_${ws.data.params["channel-id"]}`)
-      app.server?.publish(`channel_${ws.data.params["channel-id"]}`, JSON.stringify({ content: `${user.name} joined!` }), true)
+      //app.server?.publish(`channel_${ws.data.params["channel-id"]}`, JSON.stringify({ content: `${user.name} joined!` }), true)
     },
     async message(ws, message) {
       const { auth } = ws.data.cookie
@@ -40,11 +40,14 @@ export const app = new Elysia().use(cors({
         return
       }
       const [user] = await db.selectDistinct().from(users).where(eq(users.id, data?.user_id as string))
-      const [m] = await db.insert(messages).values({
+      const [res] = await db.insert(messages).values({
         content: message as string,
         authorId: user.id,
         channelId: channelId
       }).returning()
+      let m = {
+        ...res, authorName: user.name
+      }
       app.server?.publish(`channel_${ws.data.params["channel-id"]}`, JSON.stringify(m), true)
     },
     async close(ws) {

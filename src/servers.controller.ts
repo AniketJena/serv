@@ -150,7 +150,6 @@ const serversRouteHandler = new Elysia({
     return result
   })
   .get("/channel/:channel-id", async ({ params, jwt, cookie: { auth }, error: err }) => {
-
     const { "channel-id": channelId } = params
     const c = auth.cookie.value
     if (!c) {
@@ -176,6 +175,29 @@ const serversRouteHandler = new Elysia({
       .rightJoin(users, eq(messages.authorId, users.id))
 
     return channelMessages
+  })
+  .get("/:server-id/join", async ({ params, jwt, cookie: { auth }, error: err }) => {
+    const { "server-id": serverId } = params
+    const c = auth.cookie.value
+    if (!c) {
+      return err("Non-Authoritative Information", {
+        msg: "You need to login first!"
+      })
+    }
+    const data = await jwt.verify(c as string)
+    if (!data) {
+      return err("Non-Authoritative Information", {
+        msg: "invalid or expired token"
+      })
+    }
+    await db.insert(membersToServers).values({
+      memberId: data.user_id as string,
+      joinedServerId: serverId
+    })
+
+    return {
+      msg: "Joined!"
+    }
   })
 
 export default serversRouteHandler
